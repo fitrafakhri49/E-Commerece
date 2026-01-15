@@ -13,7 +13,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
+//Nambah Deskripsi Buat git pull
 export default function ProductDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
