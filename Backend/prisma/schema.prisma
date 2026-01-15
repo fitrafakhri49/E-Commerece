@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id        String  @id
+  email     String  @unique
+  name      String?
+  full_name String?
+  avatarUrl String?
+  role      Role    @default(USER) // default USER, bisa diubah jadi ADMIN untuk admin
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cart        Cart?
+  Transaction Transaction[]
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  artist      String? // Nama artis
+  releaseYear Int? // Tahun rilis
+  trackList   String? // Daftar lagu, bisa disimpan sebagai JSON string
+  price       Int
+  stock       Int      @default(0)
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  images          ProductImage[]
+  cartItems       CartItem[]
+  TransactionItem TransactionItem[]
+  Track           Track[]
+}
+
+model Track {
+  id        String  @id @default(uuid())
+  productId String
+  title     String
+  duration  Int? // durasi lagu dalam detik
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  productId String
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String @id @default(uuid())
+  cartId    String
+  productId String
+  quantity  Int    @default(1)
+
+  cart    Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+}
+
+model Transaction {
+  id          String            @id @default(uuid())
+  orderId     String            @unique
+  userId      String
+  grossAmount Int
+  status      TransactionStatus @default(PENDING)
+  snapToken   String?
+  redirectUrl String?
+
+  user  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items TransactionItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TransactionItem {
+  id            String @id @default(uuid())
+  transactionId String
+  productId     String
+  quantity      Int
+  price         Int
+
+  transaction Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+}
