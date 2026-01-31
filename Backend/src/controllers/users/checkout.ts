@@ -21,14 +21,14 @@ export const checkout = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Cart kosong" });
     }
 
-    //Validasi Stock
-    for (const item of cart.items) {
-      if (item.quantity > item.product.stock) {
-        return res.status(400).json({
-          message: `Stok produk "${item.product.name}" tidak mencukupi`,
-        });
-      }
-    }
+    // //Validasi Stock
+    // for (const item of cart.items) {
+    //   if (item.quantity > item.product.stock) {
+    //     return res.status(400).json({
+    //       message: `Stok produk "${item.product.name}" tidak mencukupi`,
+    //     });
+    //   }
+    // }
 
     const grossAmount = cart.items.reduce(
       (total, item) => total + item.product.price * item.quantity,
