@@ -21,9 +21,7 @@ export const checkout = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Cart kosong" });
     }
 
-    // ===============================
-    // VALIDASI STOK
-    // ===============================
+    //Validasi Stock
     for (const item of cart.items) {
       if (item.quantity > item.product.stock) {
         return res.status(400).json({

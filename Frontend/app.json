@@ -30,7 +30,8 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.fitrafakhri49.ECommerce"
     },
     "web": {
       "favicon": "./assets/images/favicon.png",
